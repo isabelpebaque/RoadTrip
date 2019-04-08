@@ -22,11 +22,13 @@ class MapSearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         checkLocationServices()
-        addSearchFilter(searchName: searchName ?? "")
+    //    addSearchFilter(searchName: searchName ?? "")
+        
+        var timer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(addSearchFilter), userInfo: nil, repeats: true)
 
     }
     
-        func addSearchFilter(searchName: String) {
+        @objc func addSearchFilter() {
             let serchRequest = MKLocalSearch.Request()
             serchRequest.naturalLanguageQuery = searchName
             serchRequest.region = mapView.region
