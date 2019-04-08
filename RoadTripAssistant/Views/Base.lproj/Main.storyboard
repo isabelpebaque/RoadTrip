@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="3Gj-BC-mV0">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--First View Controller-->
+        <scene sceneID="fDz-ic-1Si">
+            <objects>
+                <viewController id="3Gj-BC-mV0" customClass="FirstViewController" customModule="RoadTripAssistant" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="3rd-98-Odp">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="dgB-nN-gAj">
+                                <rect key="frame" x="299" y="146" width="51" height="31"/>
+                            </switch>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="jpQ-2d-7pa">
+                                <rect key="frame" x="299" y="185" width="51" height="31"/>
+                            </switch>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="khi-vp-A6L">
+                                <rect key="frame" x="299" y="224" width="51" height="31"/>
+                            </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Restauranger" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LWw-pN-GIF">
+                                <rect key="frame" x="66" y="151" width="225" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sevärdigheter" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qs6-Kk-hKx">
+                                <rect key="frame" x="66" y="190" width="225" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bensinstationer" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qTo-sD-itK">
+                                <rect key="frame" x="66" y="229" width="225" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oz3-B1-LKi">
+                                <rect key="frame" x="66" y="353" width="282" height="30"/>
+                                <color key="backgroundColor" red="0.25098039220000001" green="0.2784313725" blue="0.42745098040000001" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Börja leta!">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="buttonPressed:" destination="3Gj-BC-mV0" eventType="touchUpInside" id="C8C-5h-vuO"/>
+                                    <segue destination="JEj-Cc-hre" kind="show" id="sax-Ua-3rP"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="qTo-sD-itK" firstAttribute="leading" secondItem="Tn2-VI-4bq" secondAttribute="leading" constant="66" id="61m-h4-Yzx"/>
+                            <constraint firstItem="dgB-nN-gAj" firstAttribute="leading" secondItem="LWw-pN-GIF" secondAttribute="trailing" constant="8" id="7Tz-h6-dz9"/>
+                            <constraint firstItem="khi-vp-A6L" firstAttribute="leading" secondItem="qTo-sD-itK" secondAttribute="trailing" constant="8" id="Afx-0X-N4I"/>
+                            <constraint firstItem="Tn2-VI-4bq" firstAttribute="trailing" secondItem="khi-vp-A6L" secondAttribute="trailing" constant="66" id="E44-QO-RJ5"/>
+                            <constraint firstItem="jpQ-2d-7pa" firstAttribute="leading" secondItem="Qs6-Kk-hKx" secondAttribute="trailing" constant="8" id="Gye-dX-JAz"/>
+                            <constraint firstItem="Tn2-VI-4bq" firstAttribute="trailing" secondItem="jpQ-2d-7pa" secondAttribute="trailing" constant="66" id="NU8-vg-ddb"/>
+                            <constraint firstItem="LWw-pN-GIF" firstAttribute="top" secondItem="Tn2-VI-4bq" secondAttribute="top" constant="107" id="RLV-JJ-xCM"/>
+                            <constraint firstItem="Tn2-VI-4bq" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="oz3-B1-LKi" secondAttribute="trailing" constant="66" id="SbO-ZR-WpY"/>
+                            <constraint firstItem="Qs6-Kk-hKx" firstAttribute="leading" secondItem="Tn2-VI-4bq" secondAttribute="leading" constant="66" id="UIE-im-ywB"/>
+                            <constraint firstItem="qTo-sD-itK" firstAttribute="top" secondItem="Qs6-Kk-hKx" secondAttribute="bottom" constant="18" id="Ycq-Dl-wLT"/>
+                            <constraint firstItem="LWw-pN-GIF" firstAttribute="leading" secondItem="Tn2-VI-4bq" secondAttribute="leading" constant="66" id="ZSR-1D-plq"/>
+                            <constraint firstItem="oz3-B1-LKi" firstAttribute="leading" secondItem="Tn2-VI-4bq" secondAttribute="leading" constant="66" id="anM-A4-oi4"/>
+                            <constraint firstItem="khi-vp-A6L" firstAttribute="top" secondItem="jpQ-2d-7pa" secondAttribute="bottom" constant="8" id="aqb-DG-LJN"/>
+                            <constraint firstItem="oz3-B1-LKi" firstAttribute="top" secondItem="qTo-sD-itK" secondAttribute="bottom" constant="103" id="bba-ZU-eNd"/>
+                            <constraint firstItem="oz3-B1-LKi" firstAttribute="top" secondItem="khi-vp-A6L" secondAttribute="bottom" constant="98" id="fs6-5c-oKR"/>
+                            <constraint firstItem="Tn2-VI-4bq" firstAttribute="trailing" secondItem="dgB-nN-gAj" secondAttribute="trailing" constant="66" id="kXp-gk-3au"/>
+                            <constraint firstItem="Qs6-Kk-hKx" firstAttribute="top" secondItem="LWw-pN-GIF" secondAttribute="bottom" constant="18" id="ooP-XS-T4D"/>
+                            <constraint firstItem="oz3-B1-LKi" firstAttribute="centerX" secondItem="Tn2-VI-4bq" secondAttribute="centerX" id="pJl-04-QZX"/>
+                            <constraint firstItem="jpQ-2d-7pa" firstAttribute="top" secondItem="dgB-nN-gAj" secondAttribute="bottom" constant="8" id="xxX-Wo-HKm"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="Tn2-VI-4bq"/>
+                    </view>
+                    <connections>
+                        <outlet property="attractionSwitch" destination="jpQ-2d-7pa" id="N7W-iw-CBa"/>
+                        <outlet property="gasStationSwitch" destination="khi-vp-A6L" id="HXY-6z-Wdb"/>
+                        <outlet property="restaurantSwitch" destination="dgB-nN-gAj" id="eB2-ep-cR2"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="DyO-fb-R1b" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-768" y="1045"/>
+        </scene>
+        <!--Map Search View Controller-->
+        <scene sceneID="Cpr-EL-W89">
+            <objects>
+                <viewController id="JEj-Cc-hre" customClass="MapSearchViewController" customModule="RoadTripAssistant" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="P0O-xY-q74">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4Nb-Ns-eiX">
+                                <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                                <items>
+                                    <navigationItem title="Karta" id="pJv-dA-7Ei">
+                                        <barButtonItem key="rightBarButtonItem" systemItem="search" id="Wx8-mP-WrY">
+                                            <connections>
+                                                <segue destination="3Gj-BC-mV0" kind="show" id="nof-OX-1fq"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZbE-LW-dTT">
+                                <rect key="frame" x="0.0" y="88" width="414" height="599"/>
+                                <connections>
+                                    <outlet property="delegate" destination="JEj-Cc-hre" id="Ppw-0p-lAv"/>
+                                </connections>
+                            </mapView>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="ZbE-LW-dTT" firstAttribute="leading" secondItem="SaO-nD-sIH" secondAttribute="leading" id="4qe-ns-qN4"/>
+                            <constraint firstItem="4Nb-Ns-eiX" firstAttribute="leading" secondItem="SaO-nD-sIH" secondAttribute="leading" id="6SG-JH-qlx"/>
+                            <constraint firstItem="ZbE-LW-dTT" firstAttribute="trailing" secondItem="SaO-nD-sIH" secondAttribute="trailing" id="HSZ-rz-fwC"/>
+                            <constraint firstItem="ZbE-LW-dTT" firstAttribute="top" secondItem="4Nb-Ns-eiX" secondAttribute="bottom" id="W2F-G8-d6y"/>
+                            <constraint firstItem="4Nb-Ns-eiX" firstAttribute="trailing" secondItem="SaO-nD-sIH" secondAttribute="trailing" id="f8E-nn-tzz"/>
+                            <constraint firstItem="4Nb-Ns-eiX" firstAttribute="top" secondItem="SaO-nD-sIH" secondAttribute="top" id="pAV-EU-P6N"/>
+                            <constraint firstItem="SaO-nD-sIH" firstAttribute="bottom" secondItem="ZbE-LW-dTT" secondAttribute="bottom" constant="175" id="stl-l4-Djg"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="SaO-nD-sIH"/>
+                    </view>
+                    <connections>
+                        <outlet property="mapView" destination="ZbE-LW-dTT" id="da5-aI-KPV"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UrW-nl-BDw" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="136" y="1045"/>
+        </scene>
+    </scenes>
+</document>
