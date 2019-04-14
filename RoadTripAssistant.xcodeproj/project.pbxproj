@@ -62,11 +62,19 @@
 			path = Controllers;
 			sourceTree = "<group>";
 		};
+		7439A260225E181300E11C08 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		74C1FC402254E10B006ABABD = {
 			isa = PBXGroup;
 			children = (
 				74C1FC4B2254E10B006ABABD /* RoadTripAssistant */,
 				74C1FC4A2254E10B006ABABD /* Products */,
+				7439A260225E181300E11C08 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -123,6 +131,14 @@
 				TargetAttributes = {
 					74C1FC482254E10B006ABABD = {
 						CreatedOnToolsVersion = 10.1;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 0;
+							};
+							com.apple.Maps.iOS = {
+								enabled = 0;
+							};
+						};
 					};
 				};
 			};
@@ -313,7 +329,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = V4MNJZ5JDH;
 				INFOPLIST_FILE = RoadTripAssistant/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -332,7 +348,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = V4MNJZ5JDH;
 				INFOPLIST_FILE = RoadTripAssistant/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

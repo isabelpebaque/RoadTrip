@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UserNotifications
 
 class FirstViewController: UIViewController {
 
@@ -14,11 +15,18 @@ class FirstViewController: UIViewController {
     @IBOutlet weak var attractionSwitch: UISwitch!
     @IBOutlet weak var gasStationSwitch: UISwitch!
     
-    var name: String?
+    @IBOutlet weak var radius2Km: UISwitch!
+    @IBOutlet weak var radius3Km: UISwitch!
+    @IBOutlet weak var radius4Km: UISwitch!
+    
+    
+    var name = [String]()
+    var radius: Double = 0
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        name.removeAll()
 
         // Do any additional setup after loading the view.
     }
@@ -26,19 +34,32 @@ class FirstViewController: UIViewController {
     @IBAction func buttonPressed(_ sender: UIButton) {
         print("Button pressed")
         checkSearchName()
+        addRadiusToSearch()
     }
     
     func checkSearchName() {
         
         if restaurantSwitch.isOn {
-            name = "Restaurant"
+            name.append("Restaurant")
         } else if attractionSwitch.isOn {
-            name = "Tourist attraction"
+            name.append("Landmarks")
         } else if gasStationSwitch.isOn {
-            name = "Petrol station"
+            name.append("Gasstation")
         }
     }
     
+    func addRadiusToSearch() {
+        
+        if radius2Km.isOn {
+            radius = 2000
+        } else if radius3Km.isOn {
+            radius = 3000
+        } else if radius4Km.isOn {
+            radius = 4000
+        } else {
+            radius = 1000
+        }
+    }
     
     
     // MARK: - Navigation
@@ -48,6 +69,7 @@ class FirstViewController: UIViewController {
         
         let destination = segue.destination as! MapSearchViewController
         destination.searchName = name
+        destination.searchRadius = radius
     }
  
 

@@ -9,60 +9,137 @@
 import UIKit
 import MapKit
 import CoreLocation
+import UserNotifications
 
-class MapSearchViewController: UIViewController {
+class MapSearchViewController: UIViewController, UNUserNotificationCenterDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
     
     let locationManager = CLLocationManager()
-    let regionInMeters: Double = 1000
-    
-    var searchName: String?
+    var lastLocation: CLLocation?
+    var searchName = [String]()
+    var arrayOfFoundAnnotations = [MKAnnotation]()
+    var searchRadius: Double = 0
+    var isSameAnnotation: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        checkLocationServices()
-    //    addSearchFilter(searchName: searchName ?? "")
         
-        var timer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(addSearchFilter), userInfo: nil, repeats: true)
-
+        UNUserNotificationCenter.current().requestAuthorization(options: [[.alert, .sound, .badge]], completionHandler: { (granted, error) in
+            print(error?.localizedDescription as Any)
+        })
+        UNUserNotificationCenter.current().delegate = self
+        
+        checkLocationServices()
+        
     }
     
-        @objc func addSearchFilter() {
-            let serchRequest = MKLocalSearch.Request()
-            serchRequest.naturalLanguageQuery = searchName
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        
+        completionHandler([.alert, .sound])
+    }
+    
+    func setupLocalPush(NameOfAnnotation: String, adress: String){
+        
+        let content = UNMutableNotificationContent()
+        content.title = "Du har en match!"
+        content.subtitle = NameOfAnnotation
+        content.body = adress
+        content.sound = .default
+        content.categoryIdentifier = "category"
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3, repeats: false)
+        
+        let uuidString = UUID().uuidString
+        let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: trigger)
+        
+        // Schedule the request with the system.
+        let notificationCenter = UNUserNotificationCenter.current()
+        notificationCenter.add(request) { (error) in
+            if error != nil {
+                print("\(error?.localizedDescription ?? "No error info")")
+            }
+        }
+        
+        let action = UNNotificationAction(identifier: "action", title: "Färdbeskrivning", options: .foreground)
+        let category = UNNotificationCategory(identifier: "category", actions: [action], intentIdentifiers: [], options: [])
+        UNUserNotificationCenter.current().setNotificationCategories([category])
+    }
+    
+    @objc func addSearchFilter() {
+        
+        let serchRequest = MKLocalSearch.Request()
+        
+        for name in searchName {
+            
+            serchRequest.naturalLanguageQuery = name
             serchRequest.region = mapView.region
-    
-            let activeSearhc = MKLocalSearch(request: serchRequest)
-    
-            activeSearhc.start { (response, error) in
+            
+            let activeSearch = MKLocalSearch(request: serchRequest)
+            
+            activeSearch.start { (response, error) in
                 if error != nil {
                     print("There was following error: \(error ?? "No info of error" as! Error)")
                 } else if response?.mapItems.count == 0 {
                     print("No matches found!")
                 } else {
-                    print("You got following results: ")
-                   // var allItemArray = [MKMapItem]()
-    
+                    
                     guard let mapItems = response?.mapItems else { return }
-                    for item in (mapItems) {
-    
-                        print("URL=\(String(describing: item.url))")
-                        print("Name=\(item.name ?? "No info")")
-                        print("Phone Number\(item.phoneNumber ?? "No phoneNumber")")
-    
-                       // allItemArray.append(item as MKMapItem)
-    
-                       // print("Matching items = \(allItemArray.count)")
-    
-                        let annotation = MKPointAnnotation()
-                        annotation.coordinate = item.placemark.coordinate
-                        annotation.title = item.name
-                        self.mapView.addAnnotation(annotation)
+                    
+                    if self.arrayOfFoundAnnotations.count == 0 {
+                        
+                        for item in mapItems {
+                            let annotation = self.createAnnotation(item: item)
+                            self.mapView.addAnnotation(annotation)
+                        }
+                        
+                    } else {
+                        for item in (mapItems) {
+                            self.isSameAnnotation = false
+                            for newItem in self.arrayOfFoundAnnotations {
+                                
+                                if item.placemark.coordinate.longitude == newItem.coordinate.longitude &&
+                                    item.placemark.coordinate.latitude == newItem.coordinate.latitude {
+                                    self.isSameAnnotation = true
+                                }
+                            }
+                            
+                            if !self.isSameAnnotation {
+                                print("tag Ny annotation, lägger till i arrayen")
+                                let annotation = self.createAnnotation(item: item)
+                                self.mapView.addAnnotation(annotation)
+                                self.setupLocalPush(NameOfAnnotation: item.name!, adress: item.placemark.thoroughfare!)
+                                
+                                print("tag arrayens storlek är: \(self.arrayOfFoundAnnotations.count)")
+                                print("TAG name: \(String(describing: item.name))")
+                            }
+                        }
                     }
                 }
             }
         }
+    }
+    
+    func createAnnotation(item: MKMapItem) -> MKPointAnnotation{
+        
+                // Öppna färdbeskrivning i maps
+//        let source = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!)))
+//        source.name = "Source"
+//
+//        let destination = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: item.placemark.coordinate.latitude, longitude: item.placemark.coordinate.longitude)))
+//        destination.name = "Destination"
+//
+//        MKMapItem.openMaps(with: [source, destination], launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
+        
+        let newAnnotation = MKPointAnnotation()
+        newAnnotation.coordinate = item.placemark.coordinate
+        newAnnotation.title = item.name
+        newAnnotation.subtitle = item.placemark.thoroughfare
+        
+        self.arrayOfFoundAnnotations.append(newAnnotation)
+        
+        return newAnnotation
+    }
+    
     
     func setupLocationManager() {
         
@@ -73,9 +150,13 @@ class MapSearchViewController: UIViewController {
     func centerViewOnUserLocation() {
         
         if let location = locationManager.location?.coordinate {
-            let region = MKCoordinateRegion.init(center: location, latitudinalMeters: regionInMeters, longitudinalMeters: regionInMeters)
+            let region = MKCoordinateRegion.init(center: location, latitudinalMeters: searchRadius, longitudinalMeters: searchRadius)
+//            let region2 = CLLocationCoordinate2DMake(location.latitude, location.longitude)
             mapView.setRegion(region, animated: true)
-        }
+            mapView.setUserTrackingMode(MKUserTrackingMode.follow, animated: true)
+//            mapView.setCenter(region2, animated: true)
+    }
+        
     }
     
     func checkLocationServices() {
@@ -89,13 +170,13 @@ class MapSearchViewController: UIViewController {
     }
     
     func checkLocationAuthorization() {
-        
+
         switch CLLocationManager.authorizationStatus() {
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
         case .authorizedWhenInUse:
             mapView.showsUserLocation = true
-            centerViewOnUserLocation()
+            //centerViewOnUserLocation()
             locationManager.startUpdatingLocation()
             break
         case .denied:
@@ -103,36 +184,53 @@ class MapSearchViewController: UIViewController {
         case .restricted:
             break
         case .authorizedAlways:
+            mapView.showsUserLocation = true
+            //centerViewOnUserLocation()
+            locationManager.startUpdatingLocation()
             break
         }
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        let center = UNUserNotificationCenter.current()
+        center.removeAllDeliveredNotifications()
+        
+        print("Removing localPush")
+    }
 }
 
-extension MapSearchViewController: CLLocationManagerDelegate {
+extension MapSearchViewController: CLLocationManagerDelegate, MKMapViewDelegate {
     
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
-        let center = CLLocationCoordinate2DMake(location.coordinate.latitude, location.coordinate.longitude)
-        let region = MKCoordinateRegion.init(center: center, latitudinalMeters: regionInMeters, longitudinalMeters: regionInMeters)
-        mapView.setRegion(region, animated: true)
+    
+
+    func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
+       // mapView.setUserTrackingMode(.followWithHeading, animated: true)
         
+        if lastLocation != nil {
+            if lastLocation!.verticalAccuracy < 50 && lastLocation!.horizontalAccuracy < 50 {
+                if let distance = userLocation.location?.distance(from: lastLocation!) {
+                    if distance > 1000 {
+                        self.lastLocation = userLocation.location
+                        // Nu har vi förflyttat oss minst 1000 meter!
+                        // Kolla notificationCenter addObserver applicationWillEnterForeground SO
+                        self.addSearchFilter()
+                    }
+                }
+            }
+        } else {
+            if userLocation.location!.verticalAccuracy < 50 && userLocation.location!.horizontalAccuracy < 50 {
+                self.lastLocation = userLocation.location
+            }
+        }
     }
+    
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         checkLocationAuthorization()
     }
-    
 
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+    
 }
