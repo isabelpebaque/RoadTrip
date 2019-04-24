@@ -60,12 +60,6 @@ class MapSearchViewController: UIViewController {
         
     }
     
-    @objc func willResignActive(_ notification: Notification) {
-        // code to execute
-        
-        locationManager.pausesLocationUpdatesAutomatically = false
-    }
-    
     func addSearchFilter() {
     
     let serchRequest = MKLocalSearch.Request()
@@ -153,10 +147,8 @@ class MapSearchViewController: UIViewController {
         
         if let location = locationManager.location?.coordinate {
             let region = MKCoordinateRegion.init(center: location, latitudinalMeters: searchRadius, longitudinalMeters: searchRadius)
-//            let region2 = CLLocationCoordinate2DMake(location.latitude, location.longitude)
             mapView.setRegion(region, animated: true)
             mapView.setUserTrackingMode(MKUserTrackingMode.follow, animated: true)
-//            mapView.setCenter(region2, animated: true)
     }
         
     }
@@ -178,6 +170,7 @@ class MapSearchViewController: UIViewController {
             locationManager.requestAlwaysAuthorization()
         case .authorizedWhenInUse:
             mapView.showsUserLocation = true
+            centerViewOnUserLocation()
             locationManager.startUpdatingLocation()
             locationManager.allowsBackgroundLocationUpdates = true
             break
@@ -187,6 +180,7 @@ class MapSearchViewController: UIViewController {
             break
         case .authorizedAlways:
             mapView.showsUserLocation = true
+            centerViewOnUserLocation()
             locationManager.startUpdatingLocation()
             locationManager.allowsBackgroundLocationUpdates = true
             break
@@ -210,32 +204,49 @@ class MapSearchViewController: UIViewController {
 
 extension MapSearchViewController: CLLocationManagerDelegate, MKMapViewDelegate, UNUserNotificationCenterDelegate {
 
-    func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
+//    func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
+//
+//        mapView.setUserTrackingMode(.followWithHeading, animated: true)
+//
+//        if lastLocation != nil {
+//            if lastLocation!.verticalAccuracy < 50 && lastLocation!.horizontalAccuracy < 50 {
+//                if let distance = userLocation.location?.distance(from: lastLocation!) {
+//                    if distance > 1000 {
+//                        self.lastLocation = userLocation.location
+//                        // Nu har vi förflyttat oss minst 1000 meter!
+//                        // Kolla notificationCenter addObserver applicationWillEnterForeground SO
+//                        self.addSearchFilter()
+//
+//                    }
+//                }
+//            }
+//        } else {
+//            if userLocation.location!.verticalAccuracy < 50 && userLocation.location!.horizontalAccuracy < 50 {
+//                self.lastLocation = userLocation.location
+//            }
+//        }
+//    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let mostRecentLocation = locations.last else { return }
         
-        mapView.setUserTrackingMode(.followWithHeading, animated: true)
-        print("App is backgrounded")
-
-        if lastLocation != nil {
-            if lastLocation!.verticalAccuracy < 50 && lastLocation!.horizontalAccuracy < 50 {
-                if let distance = userLocation.location?.distance(from: lastLocation!) {
+        if UIApplication.shared.applicationState == .active || UIApplication.shared.applicationState != .active {
+            print("user on the move")
+            if lastLocation != nil {
+                if lastLocation!.verticalAccuracy < 50 && lastLocation!.horizontalAccuracy < 50 {
+                    let distance = mostRecentLocation.distance(from: lastLocation!)
                     if distance > 1000 {
-                        self.lastLocation = userLocation.location
+                        self.lastLocation = mostRecentLocation
                         // Nu har vi förflyttat oss minst 1000 meter!
                         // Kolla notificationCenter addObserver applicationWillEnterForeground SO
-//                        self.addSearchFilter()
-
-                        if UIApplication.shared.applicationState == .active {
-                            self.addSearchFilter()
-                        } else {
-                            print("App is backgrounded")
-                            self.addSearchFilter()
-                        }
+                        self.addSearchFilter()
+                        
                     }
                 }
-            }
-        } else {
-            if userLocation.location!.verticalAccuracy < 50 && userLocation.location!.horizontalAccuracy < 50 {
-                self.lastLocation = userLocation.location
+            } else {
+                if mostRecentLocation.verticalAccuracy < 50 && mostRecentLocation.horizontalAccuracy < 50 {
+                    self.lastLocation = mostRecentLocation
+                }
             }
         }
     }
