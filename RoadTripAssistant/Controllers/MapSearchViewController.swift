@@ -11,7 +11,7 @@ import MapKit
 import CoreLocation
 import UserNotifications
 
-class MapSearchViewController: UIViewController, UNUserNotificationCenterDelegate {
+class MapSearchViewController: UIViewController {
 
     @IBOutlet weak var mapView: MKMapView!
     
@@ -25,110 +25,112 @@ class MapSearchViewController: UIViewController, UNUserNotificationCenterDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        UNUserNotificationCenter.current().requestAuthorization(options: [[.alert, .sound, .badge]], completionHandler: { (granted, error) in
+        UNUserNotificationCenter.current().requestAuthorization(options: [[.alert, .sound]], completionHandler: { (granted, error) in
             print(error?.localizedDescription as Any)
         })
         UNUserNotificationCenter.current().delegate = self
         
         checkLocationServices()
         
-    }
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         
-        completionHandler([.alert, .sound])
     }
     
-    func setupLocalPush(NameOfAnnotation: String, adress: String){
+    func setupLocalPush(annotation: MKMapItem){
+        
+        let userActions = "User Actions"
         
         let content = UNMutableNotificationContent()
         content.title = "Du har en match!"
-        content.subtitle = NameOfAnnotation
-        content.body = adress
+        content.subtitle = annotation.name!
+        content.body = "Färdbeskrivning"
         content.sound = .default
-        content.categoryIdentifier = "category"
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3, repeats: false)
+        content.categoryIdentifier = userActions
+        content.userInfo = ["notificationLongitude" : annotation.placemark.coordinate.longitude, "notificationLatitude" : annotation.placemark.coordinate.latitude]
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
         
         let uuidString = UUID().uuidString
         let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: trigger)
         
-        // Schedule the request with the system.
-        let notificationCenter = UNUserNotificationCenter.current()
-        notificationCenter.add(request) { (error) in
-            if error != nil {
-                print("\(error?.localizedDescription ?? "No error info")")
-            }
-        }
+        let navigationAction = UNNotificationAction(identifier: "navigation", title: "Färdbeskrivning", options: [])
+        let category = UNNotificationCategory(identifier: userActions, actions: [navigationAction], intentIdentifiers: [], options: [])
         
-        let action = UNNotificationAction(identifier: "action", title: "Färdbeskrivning", options: .foreground)
-        let category = UNNotificationCategory(identifier: "category", actions: [action], intentIdentifiers: [], options: [])
         UNUserNotificationCenter.current().setNotificationCategories([category])
+        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
+        
     }
     
-    @objc func addSearchFilter() {
+    @objc func willResignActive(_ notification: Notification) {
+        // code to execute
         
-        let serchRequest = MKLocalSearch.Request()
+        locationManager.pausesLocationUpdatesAutomatically = false
+    }
+    
+    func addSearchFilter() {
+    
+    let serchRequest = MKLocalSearch.Request()
+    
+    for name in searchName {
         
-        for name in searchName {
-            
-            serchRequest.naturalLanguageQuery = name
-            serchRequest.region = mapView.region
-            
-            let activeSearch = MKLocalSearch(request: serchRequest)
-            
-            activeSearch.start { (response, error) in
-                if error != nil {
-                    print("There was following error: \(error ?? "No info of error" as! Error)")
-                } else if response?.mapItems.count == 0 {
-                    print("No matches found!")
+        serchRequest.naturalLanguageQuery = name
+        serchRequest.region = mapView.region
+        
+        let activeSearch = MKLocalSearch(request: serchRequest)
+        
+        activeSearch.start { (response, error) in
+            if error != nil {
+                print("There was following error: \(error ?? "No info of error" as! Error)")
+            } else if response?.mapItems.count == 0 {
+                print("No matches found!")
+            } else {
+                
+                guard let mapItems = response?.mapItems else { return }
+                
+                if self.arrayOfFoundAnnotations.count == 0 {
+                    
+                    for item in mapItems {
+                        let annotation = self.createAnnotation(item: item)
+                        self.mapView.addAnnotation(annotation)
+                    }
+                    
                 } else {
-                    
-                    guard let mapItems = response?.mapItems else { return }
-                    
-                    if self.arrayOfFoundAnnotations.count == 0 {
-                        
-                        for item in mapItems {
-                            let annotation = self.createAnnotation(item: item)
-                            self.mapView.addAnnotation(annotation)
+                    for item in (mapItems) {
+                        self.isSameAnnotation = false
+                        for newItem in self.arrayOfFoundAnnotations {
+                            
+                            if item.placemark.coordinate.longitude == newItem.coordinate.longitude &&
+                                item.placemark.coordinate.latitude == newItem.coordinate.latitude {
+                                self.isSameAnnotation = true
+                            }
                         }
                         
-                    } else {
-                        for item in (mapItems) {
-                            self.isSameAnnotation = false
-                            for newItem in self.arrayOfFoundAnnotations {
-                                
-                                if item.placemark.coordinate.longitude == newItem.coordinate.longitude &&
-                                    item.placemark.coordinate.latitude == newItem.coordinate.latitude {
-                                    self.isSameAnnotation = true
-                                }
-                            }
+                        if !self.isSameAnnotation {
+                            print("tag Ny annotation, lägger till i arrayen")
+                            let annotation = self.createAnnotation(item: item)
+                            self.mapView.addAnnotation(annotation)
+                            self.setupLocalPush(annotation: item)
                             
-                            if !self.isSameAnnotation {
-                                print("tag Ny annotation, lägger till i arrayen")
-                                let annotation = self.createAnnotation(item: item)
-                                self.mapView.addAnnotation(annotation)
-                                self.setupLocalPush(NameOfAnnotation: item.name!, adress: item.placemark.thoroughfare!)
-                                
-                                print("tag arrayens storlek är: \(self.arrayOfFoundAnnotations.count)")
-                                print("TAG name: \(String(describing: item.name))")
-                            }
+                            print("tag arrayens storlek är: \(self.arrayOfFoundAnnotations.count)")
+                            print("TAG name: \(String(describing: item.name))")
                         }
                     }
                 }
             }
         }
     }
+}
     
-    func createAnnotation(item: MKMapItem) -> MKPointAnnotation{
-        
-                // Öppna färdbeskrivning i maps
-//        let source = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!)))
-//        source.name = "Source"
-//
-//        let destination = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: item.placemark.coordinate.latitude, longitude: item.placemark.coordinate.longitude)))
-//        destination.name = "Destination"
-//
-//        MKMapItem.openMaps(with: [source, destination], launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
+    func openNavigationInMaps(longitude: CLLocationDegrees, latitude: CLLocationDegrees) {
+        let source = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!)))
+        source.name = "Din position"
+
+        let destination = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude)))
+        destination.name = "Destination"
+
+        MKMapItem.openMaps(with: [source, destination], launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
+    }
+    
+    func createAnnotation(item: MKMapItem) -> MKPointAnnotation {
         
         let newAnnotation = MKPointAnnotation()
         newAnnotation.coordinate = item.placemark.coordinate
@@ -173,11 +175,11 @@ class MapSearchViewController: UIViewController, UNUserNotificationCenterDelegat
 
         switch CLLocationManager.authorizationStatus() {
         case .notDetermined:
-            locationManager.requestWhenInUseAuthorization()
+            locationManager.requestAlwaysAuthorization()
         case .authorizedWhenInUse:
             mapView.showsUserLocation = true
-            //centerViewOnUserLocation()
             locationManager.startUpdatingLocation()
+            locationManager.allowsBackgroundLocationUpdates = true
             break
         case .denied:
             break
@@ -185,8 +187,8 @@ class MapSearchViewController: UIViewController, UNUserNotificationCenterDelegat
             break
         case .authorizedAlways:
             mapView.showsUserLocation = true
-            //centerViewOnUserLocation()
             locationManager.startUpdatingLocation()
+            locationManager.allowsBackgroundLocationUpdates = true
             break
         }
     }
@@ -197,17 +199,22 @@ class MapSearchViewController: UIViewController, UNUserNotificationCenterDelegat
         let center = UNUserNotificationCenter.current()
         center.removeAllDeliveredNotifications()
         
+        
         print("Removing localPush")
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        locationManager.stopUpdatingLocation()
     }
 }
 
-extension MapSearchViewController: CLLocationManagerDelegate, MKMapViewDelegate {
-    
-    
+extension MapSearchViewController: CLLocationManagerDelegate, MKMapViewDelegate, UNUserNotificationCenterDelegate {
 
     func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
-       // mapView.setUserTrackingMode(.followWithHeading, animated: true)
         
+        mapView.setUserTrackingMode(.followWithHeading, animated: true)
+        print("App is backgrounded")
+
         if lastLocation != nil {
             if lastLocation!.verticalAccuracy < 50 && lastLocation!.horizontalAccuracy < 50 {
                 if let distance = userLocation.location?.distance(from: lastLocation!) {
@@ -215,7 +222,14 @@ extension MapSearchViewController: CLLocationManagerDelegate, MKMapViewDelegate 
                         self.lastLocation = userLocation.location
                         // Nu har vi förflyttat oss minst 1000 meter!
                         // Kolla notificationCenter addObserver applicationWillEnterForeground SO
-                        self.addSearchFilter()
+//                        self.addSearchFilter()
+
+                        if UIApplication.shared.applicationState == .active {
+                            self.addSearchFilter()
+                        } else {
+                            print("App is backgrounded")
+                            self.addSearchFilter()
+                        }
                     }
                 }
             }
@@ -226,11 +240,27 @@ extension MapSearchViewController: CLLocationManagerDelegate, MKMapViewDelegate 
         }
     }
     
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        
+        completionHandler([.alert, .sound])
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        
+        let userInfo = response.notification.request.content.userInfo
+        
+        if  response.notification.request.content.categoryIdentifier == "User Actions" {
+            let longitude = userInfo["notificationLongitude"] as! CLLocationDegrees
+            let latitude = userInfo["notificationLatitude"] as! CLLocationDegrees
+            
+            self.openNavigationInMaps(longitude: longitude, latitude: latitude)
+        }
+        completionHandler()
+    }
+    
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         checkLocationAuthorization()
     }
-
-    
     
 }
