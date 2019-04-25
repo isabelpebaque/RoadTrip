@@ -52,7 +52,7 @@ class MapSearchViewController: UIViewController {
         let uuidString = UUID().uuidString
         let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: trigger)
         
-        let navigationAction = UNNotificationAction(identifier: "navigation", title: "Färdbeskrivning", options: [])
+        let navigationAction = UNNotificationAction(identifier: "navigation", title: "Färdbeskrivning", options: .foreground)
         let category = UNNotificationCategory(identifier: userActions, actions: [navigationAction], intentIdentifiers: [], options: [])
         
         UNUserNotificationCenter.current().setNotificationCategories([category])
@@ -230,7 +230,7 @@ extension MapSearchViewController: CLLocationManagerDelegate, MKMapViewDelegate,
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let mostRecentLocation = locations.last else { return }
         
-        if UIApplication.shared.applicationState == .active || UIApplication.shared.applicationState != .active {
+        if UIApplication.shared.applicationState == .active || UIApplication.shared.applicationState == .inactive || UIApplication.shared.applicationState == .background {
             print("user on the move")
             if lastLocation != nil {
                 if lastLocation!.verticalAccuracy < 50 && lastLocation!.horizontalAccuracy < 50 {
