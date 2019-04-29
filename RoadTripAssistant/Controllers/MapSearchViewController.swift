@@ -45,7 +45,7 @@ class MapSearchViewController: UIViewController {
         content.body = "Färdbeskrivning"
         content.sound = .default
         content.categoryIdentifier = userActions
-        content.userInfo = ["notificationLongitude" : annotation.placemark.coordinate.longitude, "notificationLatitude" : annotation.placemark.coordinate.latitude]
+        content.userInfo = ["notificationLongitude" : annotation.placemark.coordinate.longitude, "notificationLatitude" : annotation.placemark.coordinate.latitude, "notificationName" : annotation.name]
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
         
@@ -114,12 +114,12 @@ class MapSearchViewController: UIViewController {
     }
 }
     
-    func openNavigationInMaps(longitude: CLLocationDegrees, latitude: CLLocationDegrees) {
+    func openNavigationInMaps(longitude: CLLocationDegrees, latitude: CLLocationDegrees, name: String) {
         let source = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!)))
         source.name = "Din position"
 
         let destination = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude)))
-        destination.name = "Destination"
+        destination.name = name
 
         MKMapItem.openMaps(with: [source, destination], launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
     }
@@ -203,34 +203,11 @@ class MapSearchViewController: UIViewController {
 }
 
 extension MapSearchViewController: CLLocationManagerDelegate, MKMapViewDelegate, UNUserNotificationCenterDelegate {
-
-//    func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
-//
-//        mapView.setUserTrackingMode(.followWithHeading, animated: true)
-//
-//        if lastLocation != nil {
-//            if lastLocation!.verticalAccuracy < 50 && lastLocation!.horizontalAccuracy < 50 {
-//                if let distance = userLocation.location?.distance(from: lastLocation!) {
-//                    if distance > 1000 {
-//                        self.lastLocation = userLocation.location
-//                        // Nu har vi förflyttat oss minst 1000 meter!
-//                        // Kolla notificationCenter addObserver applicationWillEnterForeground SO
-//                        self.addSearchFilter()
-//
-//                    }
-//                }
-//            }
-//        } else {
-//            if userLocation.location!.verticalAccuracy < 50 && userLocation.location!.horizontalAccuracy < 50 {
-//                self.lastLocation = userLocation.location
-//            }
-//        }
-//    }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let mostRecentLocation = locations.last else { return }
         
-        if UIApplication.shared.applicationState == .active || UIApplication.shared.applicationState == .inactive || UIApplication.shared.applicationState == .background {
+        if UIApplication.shared.applicationState == .active || UIApplication.shared.applicationState == .background || UIApplication.shared.applicationState == .background {
             print("user on the move")
             if lastLocation != nil {
                 if lastLocation!.verticalAccuracy < 50 && lastLocation!.horizontalAccuracy < 50 {
@@ -263,8 +240,9 @@ extension MapSearchViewController: CLLocationManagerDelegate, MKMapViewDelegate,
         if  response.notification.request.content.categoryIdentifier == "User Actions" {
             let longitude = userInfo["notificationLongitude"] as! CLLocationDegrees
             let latitude = userInfo["notificationLatitude"] as! CLLocationDegrees
+            let name = userInfo["notificationName"] as! String
             
-            self.openNavigationInMaps(longitude: longitude, latitude: latitude)
+            self.openNavigationInMaps(longitude: longitude, latitude: latitude, name: name)
         }
         completionHandler()
     }
