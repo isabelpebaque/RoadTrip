@@ -45,7 +45,7 @@ class MapSearchViewController: UIViewController {
         content.body = "Färdbeskrivning"
         content.sound = .default
         content.categoryIdentifier = userActions
-        content.userInfo = ["notificationLongitude" : annotation.placemark.coordinate.longitude, "notificationLatitude" : annotation.placemark.coordinate.latitude, "notificationName" : annotation.name]
+        content.userInfo = ["notificationLongitude" : annotation.placemark.coordinate.longitude, "notificationLatitude" : annotation.placemark.coordinate.latitude, "notificationName" : annotation.name!]
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
         
