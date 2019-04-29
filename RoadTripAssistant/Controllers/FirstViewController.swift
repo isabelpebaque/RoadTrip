@@ -28,7 +28,6 @@ class FirstViewController: UIViewController {
         super.viewDidLoad()
         name.removeAll()
 
-        // Do any additional setup after loading the view.
     }
     
     @IBAction func buttonPressed(_ sender: UIButton) {
@@ -40,11 +39,11 @@ class FirstViewController: UIViewController {
     func checkSearchName() {
         
         if restaurantSwitch.isOn {
-            name.append("Restaurant")
+            name.append("Restaurang")
         } else if attractionSwitch.isOn {
-            name.append("Landmarks")
+            name.append("Landmärken")
         } else if gasStationSwitch.isOn {
-            name.append("Gasstation")
+            name.append("Bensinstation")
         }
     }
     
