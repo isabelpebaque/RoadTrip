@@ -8,18 +8,43 @@
 
 import UIKit
 import UserNotifications
+import MapKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     var window: UIWindow?
+    let locationManager = CLLocationManager()
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
+        UNUserNotificationCenter.current().requestAuthorization(options: [[.alert, .sound]], completionHandler: { (granted, error) in
+            print(error?.localizedDescription as Any)
+        })
+        UNUserNotificationCenter.current().delegate = self
         
+        switch CLLocationManager.authorizationStatus() {
+        case .notDetermined:
+            locationManager.requestAlwaysAuthorization()
+        case .authorizedWhenInUse:
+            //mapView.showsUserLocation = true
+            locationManager.startUpdatingLocation()
+            locationManager.allowsBackgroundLocationUpdates = true
+            break
+        case .denied:
+            break
+        case .restricted:
+            break
+        case .authorizedAlways:
+            //mapView.showsUserLocation = true
+            locationManager.startUpdatingLocation()
+            locationManager.allowsBackgroundLocationUpdates = true
+            break
+        }
         return true
+        
     }
     
 

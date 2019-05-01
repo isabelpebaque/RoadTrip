@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		746F451D22786FFE00FA67B4 /* LocalNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 746F451C22786FFE00FA67B4 /* LocalNotificationManager.swift */; };
 		74C1FC4D2254E10B006ABABD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74C1FC4C2254E10B006ABABD /* AppDelegate.swift */; };
 		74C1FC522254E10B006ABABD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 74C1FC502254E10B006ABABD /* Main.storyboard */; };
 		74C1FC542254E10D006ABABD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 74C1FC532254E10D006ABABD /* Assets.xcassets */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		746F451C22786FFE00FA67B4 /* LocalNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationManager.swift; sourceTree = "<group>"; };
 		74C1FC492254E10B006ABABD /* RoadTripAssistant.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RoadTripAssistant.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		74C1FC4C2254E10B006ABABD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		74C1FC512254E10B006ABABD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -37,13 +39,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		74349D5A225A7EFE00C1F2FD /* Models */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
 		74349D5B225A7F0500C1F2FD /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -69,6 +64,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		746F451822786CE800FA67B4 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				746F451C22786FFE00FA67B4 /* LocalNotificationManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
 		74C1FC402254E10B006ABABD = {
 			isa = PBXGroup;
 			children = (
@@ -89,9 +92,9 @@
 		74C1FC4B2254E10B006ABABD /* RoadTripAssistant */ = {
 			isa = PBXGroup;
 			children = (
+				746F451822786CE800FA67B4 /* Managers */,
 				74349D5C225A7F0A00C1F2FD /* Controllers */,
 				74349D5B225A7F0500C1F2FD /* Views */,
-				74349D5A225A7EFE00C1F2FD /* Models */,
 				74C1FC4C2254E10B006ABABD /* AppDelegate.swift */,
 				74C1FC532254E10D006ABABD /* Assets.xcassets */,
 				74C1FC582254E10D006ABABD /* Info.plist */,
@@ -180,6 +183,7 @@
 			files = (
 				74C1FC4D2254E10B006ABABD /* AppDelegate.swift in Sources */,
 				74F3D802225A90B9009AD2CB /* MapSearchViewController.swift in Sources */,
+				746F451D22786FFE00FA67B4 /* LocalNotificationManager.swift in Sources */,
 				74F3D800225A907B009AD2CB /* FirstViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
