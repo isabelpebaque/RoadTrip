@@ -30,6 +30,7 @@ class MapSearchViewController: UIViewController {
         
     }
     
+    //MARK: Mapkit search
     func addSearchFilter() {
         
         let serchRequest = MKLocalSearch.Request()
@@ -72,8 +73,7 @@ class MapSearchViewController: UIViewController {
                                 print("tag Ny annotation, lägger till i arrayen")
                                 let annotation = self.createAnnotation(item: item)
                                 self.mapView.addAnnotation(annotation)
-                                //self.setupLocalNotification(annotation: item)
-                                LocalNotificationManager.shared.setupLocalNotification(annotation: item)
+                                self.setupLocalNotification(annotation: item)
                                 
                                 print("tag arrayens storlek är: \(self.arrayOfFoundAnnotations.count)")
                                 print("TAG name: \(String(describing: item.name))")
@@ -107,7 +107,7 @@ class MapSearchViewController: UIViewController {
         return newAnnotation
     }
     
-    
+    // MARK: Location
     func setupLocationManager() {
         
         locationManager.delegate = self
@@ -118,8 +118,10 @@ class MapSearchViewController: UIViewController {
         
         if let location = locationManager.location?.coordinate {
             let region = MKCoordinateRegion.init(center: location, latitudinalMeters: searchRadius, longitudinalMeters: searchRadius)
+            mapView.setUserTrackingMode(MKUserTrackingMode.follow, animated: true)
             mapView.setRegion(region, animated: true)
         }
+        
     }
     
     func checkLocationServices() {
@@ -131,6 +133,13 @@ class MapSearchViewController: UIViewController {
             //checkLocationAuthorization()
         } else {
             // show alert to user to enable location
+        }
+    }
+    
+    func checkLocationAuthorization() {
+        
+        switch CLLocationManager.authorizationStatus() {
+        case .notDetermined:
             locationManager.requestAlwaysAuthorization()
         }
     }
@@ -162,15 +171,54 @@ class MapSearchViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
+        let center = UNUserNotificationCenter.current()
+        
         locationManager.stopUpdatingLocation()
         
         let center = UNUserNotificationCenter.current()
         center.removeAllDeliveredNotifications()
         print("Removing localPush")
     }
+    
+    // MARK: Local Notification
+    func setupLocalNotification(annotation: MKMapItem){
+        
+        let userActions = "User Actions"
+        
+        let content = UNMutableNotificationContent()
+        content.title = "Du har en match!"
+        content.subtitle = annotation.name!
+        content.body = "Färdbeskrivning"
+        content.sound = .default
+        content.categoryIdentifier = userActions
+        content.userInfo = ["notificationLongitude" : annotation.placemark.coordinate.longitude, "notificationLatitude" : annotation.placemark.coordinate.latitude, "notificationName" : annotation.name!]
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        
+        let uuidString = UUID().uuidString
+        let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: trigger)
+        
+        let navigationAction = UNNotificationAction(identifier: "navigation", title: "Färdbeskrivning", options: .foreground)
+        let category = UNNotificationCategory(identifier: userActions, actions: [navigationAction], intentIdentifiers: [], options: [])
+        
+        UNUserNotificationCenter.current().setNotificationCategories([category])
+        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
+        
+    }
+    
+    func openNavigationInMaps(longitude: CLLocationDegrees, latitude: CLLocationDegrees, name: String) {
+        let source = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!)))
+        source.name = "Din position"
+        
+        let destination = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude)))
+        destination.name = name
+        
+        MKMapItem.openMaps(with: [source, destination], launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
+    }
 }
 
-extension MapSearchViewController: CLLocationManagerDelegate, UNUserNotificationCenterDelegate {
+// MARK: Delegates methods for location and notification
+extension MapSearchViewController: CLLocationManagerDelegate, MKMapViewDelegate, UNUserNotificationCenterDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let mostRecentLocation = locations.last else { return }
@@ -216,8 +264,8 @@ extension MapSearchViewController: CLLocationManagerDelegate, UNUserNotification
     }
     
     
-//    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-//        checkLocationAuthorization()
-//    }
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        checkLocationAuthorization()
+    }
     
 }
