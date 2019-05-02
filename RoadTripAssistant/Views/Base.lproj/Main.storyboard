@@ -62,12 +62,6 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hur stor radie ska söket ha?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BbP-pp-h9O">
-                                <rect key="frame" x="20" y="314" width="374" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2 km" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A5A-FR-duO">
                                 <rect key="frame" x="66" y="363" width="225" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -95,6 +89,12 @@
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="9lh-6X-xMU">
                                 <rect key="frame" x="299" y="397" width="51" height="31"/>
                             </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hur stor radie ska söket ha?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BbP-pp-h9O">
+                                <rect key="frame" x="20" y="314" width="374" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
@@ -176,7 +176,7 @@
                                 </items>
                             </navigationBar>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZbE-LW-dTT">
-                                <rect key="frame" x="0.0" y="88" width="414" height="599"/>
+                                <rect key="frame" x="0.0" y="88" width="414" height="816"/>
                                 <connections>
                                     <outlet property="delegate" destination="JEj-Cc-hre" id="Ppw-0p-lAv"/>
                                 </connections>
@@ -190,7 +190,7 @@
                             <constraint firstItem="ZbE-LW-dTT" firstAttribute="top" secondItem="4Nb-Ns-eiX" secondAttribute="bottom" id="W2F-G8-d6y"/>
                             <constraint firstItem="4Nb-Ns-eiX" firstAttribute="trailing" secondItem="SaO-nD-sIH" secondAttribute="trailing" id="f8E-nn-tzz"/>
                             <constraint firstItem="4Nb-Ns-eiX" firstAttribute="top" secondItem="SaO-nD-sIH" secondAttribute="top" id="pAV-EU-P6N"/>
-                            <constraint firstItem="SaO-nD-sIH" firstAttribute="bottom" secondItem="ZbE-LW-dTT" secondAttribute="bottom" constant="175" id="stl-l4-Djg"/>
+                            <constraint firstItem="SaO-nD-sIH" firstAttribute="bottom" secondItem="ZbE-LW-dTT" secondAttribute="bottom" constant="-42" id="stl-l4-Djg"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="SaO-nD-sIH"/>
                     </view>
@@ -200,7 +200,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UrW-nl-BDw" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="136" y="1045"/>
+            <point key="canvasLocation" x="134.78260869565219" y="1044.6428571428571"/>
         </scene>
     </scenes>
 </document>

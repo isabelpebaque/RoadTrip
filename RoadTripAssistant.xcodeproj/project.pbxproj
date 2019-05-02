@@ -37,13 +37,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		74349D5A225A7EFE00C1F2FD /* Models */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
 		74349D5B225A7F0500C1F2FD /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -91,7 +84,6 @@
 			children = (
 				74349D5C225A7F0A00C1F2FD /* Controllers */,
 				74349D5B225A7F0500C1F2FD /* Views */,
-				74349D5A225A7EFE00C1F2FD /* Models */,
 				74C1FC4C2254E10B006ABABD /* AppDelegate.swift */,
 				74C1FC532254E10D006ABABD /* Assets.xcassets */,
 				74C1FC582254E10D006ABABD /* Info.plist */,
