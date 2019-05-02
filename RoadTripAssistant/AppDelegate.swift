@@ -23,8 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         UNUserNotificationCenter.current().requestAuthorization(options: [[.alert, .sound]], completionHandler: { (granted, error) in
             print(error?.localizedDescription as Any)
         })
-        UNUserNotificationCenter.current().delegate = self
-       
+               
         return true
         
     }

@@ -24,7 +24,8 @@ class MapSearchViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        UNUserNotificationCenter.current().delegate = self
+
         checkLocationServices()
         
     }
