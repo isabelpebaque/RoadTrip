@@ -26,7 +26,6 @@ class MapSearchViewController: UIViewController {
         super.viewDidLoad()
         
         checkLocationServices()
-        mapView.setUserTrackingMode(MKUserTrackingMode.follow, animated: true)
         
     }
     
@@ -85,16 +84,6 @@ class MapSearchViewController: UIViewController {
         }
     }
     
-    func openNavigationInMaps(longitude: CLLocationDegrees, latitude: CLLocationDegrees, name: String) {
-        let source = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!)))
-        source.name = "Din position"
-        
-        let destination = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude)))
-        destination.name = name
-        
-        MKMapItem.openMaps(with: [source, destination], launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
-    }
-    
     func createAnnotation(item: MKMapItem) -> MKPointAnnotation {
         
         let newAnnotation = MKPointAnnotation()
@@ -108,12 +97,6 @@ class MapSearchViewController: UIViewController {
     }
     
     // MARK: Location
-    func setupLocationManager() {
-        
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-    }
-    
     func setRadiusOnMap() {
         
         if let location = locationManager.location?.coordinate {
@@ -121,16 +104,19 @@ class MapSearchViewController: UIViewController {
             mapView.setUserTrackingMode(MKUserTrackingMode.follow, animated: true)
             mapView.setRegion(region, animated: true)
         }
+    }
+    
+    func setupLocationManager() {
         
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
     }
     
     func checkLocationServices() {
         
         if CLLocationManager.locationServicesEnabled(){
             setupLocationManager()
-            setRadiusOnMap()
-            mapView.showsUserLocation = true
-            //checkLocationAuthorization()
+            mapView.setUserTrackingMode(MKUserTrackingMode.follow, animated: true)
         } else {
             // show alert to user to enable location
         }
@@ -141,32 +127,24 @@ class MapSearchViewController: UIViewController {
         switch CLLocationManager.authorizationStatus() {
         case .notDetermined:
             locationManager.requestAlwaysAuthorization()
+        case .authorizedWhenInUse:
+            mapView.showsUserLocation = true
+            setRadiusOnMap()
+            locationManager.startUpdatingLocation()
+            locationManager.allowsBackgroundLocationUpdates = true
+            break
+        case .denied:
+            break
+        case .restricted:
+            break
+        case .authorizedAlways:
+            mapView.showsUserLocation = true
+            setRadiusOnMap()
+            locationManager.startUpdatingLocation()
+            locationManager.allowsBackgroundLocationUpdates = true
+            break
         }
     }
-    
-//    func checkLocationAuthorization() {
-//
-//        switch CLLocationManager.authorizationStatus() {
-//        case .notDetermined:
-//            locationManager.requestAlwaysAuthorization()
-//        case .authorizedWhenInUse:
-//            mapView.showsUserLocation = true
-//            setRadiusOnMap()
-//            locationManager.startUpdatingLocation()
-//            locationManager.allowsBackgroundLocationUpdates = true
-//            break
-//        case .denied:
-//            break
-//        case .restricted:
-//            break
-//        case .authorizedAlways:
-//            mapView.showsUserLocation = true
-//            setRadiusOnMap()
-//            locationManager.startUpdatingLocation()
-//            locationManager.allowsBackgroundLocationUpdates = true
-//            break
-//        }
-//    }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -174,8 +152,6 @@ class MapSearchViewController: UIViewController {
         let center = UNUserNotificationCenter.current()
         
         locationManager.stopUpdatingLocation()
-        
-        let center = UNUserNotificationCenter.current()
         center.removeAllDeliveredNotifications()
         print("Removing localPush")
     }
@@ -218,7 +194,7 @@ class MapSearchViewController: UIViewController {
 }
 
 // MARK: Delegates methods for location and notification
-extension MapSearchViewController: CLLocationManagerDelegate, MKMapViewDelegate, UNUserNotificationCenterDelegate {
+extension MapSearchViewController: CLLocationManagerDelegate, UNUserNotificationCenterDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let mostRecentLocation = locations.last else { return }

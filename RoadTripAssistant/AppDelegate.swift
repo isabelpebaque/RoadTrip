@@ -24,25 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             print(error?.localizedDescription as Any)
         })
         UNUserNotificationCenter.current().delegate = self
-        
-        switch CLLocationManager.authorizationStatus() {
-        case .notDetermined:
-            locationManager.requestAlwaysAuthorization()
-        case .authorizedWhenInUse:
-            //mapView.showsUserLocation = true
-            locationManager.startUpdatingLocation()
-            locationManager.allowsBackgroundLocationUpdates = true
-            break
-        case .denied:
-            break
-        case .restricted:
-            break
-        case .authorizedAlways:
-            //mapView.showsUserLocation = true
-            locationManager.startUpdatingLocation()
-            locationManager.allowsBackgroundLocationUpdates = true
-            break
-        }
+       
         return true
         
     }
