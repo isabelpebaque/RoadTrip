@@ -317,7 +317,7 @@
 		74C1FC5C2254E10D006ABABD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = V4MNJZ5JDH;
 				INFOPLIST_FILE = RoadTripAssistant/Info.plist;
@@ -336,7 +336,7 @@
 		74C1FC5D2254E10D006ABABD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = V4MNJZ5JDH;
 				INFOPLIST_FILE = RoadTripAssistant/Info.plist;
